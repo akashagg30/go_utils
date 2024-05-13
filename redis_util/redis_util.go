@@ -16,17 +16,15 @@ type RedisClient struct {
 	client *redis.Client
 }
 
-var redisClient *RedisClient
-
 // Initialize initializes the Redis client.
-func Initialize(addr, password string, db int) {
+func InitializeRedisClient(addr, password string, db int) *RedisClient {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: password,
 		DB:       db,
 	})
 
-	redisClient = &RedisClient{client: rdb}
+	redisClient := &RedisClient{client: rdb}
 
 	// Listen for interrupt signals to close the Redis connection gracefully
 	interrupt := make(chan os.Signal, 1)
@@ -38,10 +36,7 @@ func Initialize(addr, password string, db int) {
 			fmt.Println("Error closing Redis connection:", err)
 		}
 	}()
-}
 
-// NewRedisClient creates a new Redis client instance.
-func NewRedisClient() *RedisClient {
 	return redisClient
 }
 
